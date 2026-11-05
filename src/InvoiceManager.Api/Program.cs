@@ -2,6 +2,8 @@ using InvoiceManager.Infrastructure.Persistence;
 using InvoiceManager.Application.Abstractions.Storage;
 using InvoiceManager.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
+using InvoiceManager.Application.Abstractions.Extraction;
+using InvoiceManager.Infrastructure.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,32 @@ builder.Services.AddScoped<
     IFileStorageService,
     LocalFileStorageService
 >();
+
+//Gemini Configuration
+builder.Services
+    .AddOptions<GeminiOptions>()
+    .Bind(builder.Configuration.GetSection(
+        GeminiOptions.SectionName))
+    .Validate(
+        options => !string.IsNullOrWhiteSpace(options.ApiKey),
+        "The API Key is required.")
+    .Validate(
+        options => !string.IsNullOrWhiteSpace(options.Model),
+        "The Gemini Model is required")
+    .ValidateOnStart();
+
+//Http Client Typing for Gemini
+builder.Services.AddHttpClient<
+    IInvoiceExtractionService,
+    GeminiInvoiceExtractionService
+>(client =>
+{
+    client.BaseAddress = new Uri(
+        "https://generativelanguage.googleapis.com/"
+    );
+
+    client.Timeout = TimeSpan.FromSeconds(90);
+});
 
 // Add services to the container.
 

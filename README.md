@@ -15,7 +15,7 @@ Frontend ........................ Angular 22 + TypeScript
 Backend  ........................ C# ASP.NET Core Web API .NET 10 
 ORM ............................. Entity Framework Core 10
 Database ........................ Microsoft SQL Server
-LLM ............................. OpenAI API
+LLM ............................. Gemini-2.5-Flash-Lite
 Version Control ................. Git + GitHub
 
 Architecture
