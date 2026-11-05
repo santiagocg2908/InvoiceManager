@@ -4,7 +4,7 @@
         string SupplierName,
         string InvoiceNumber,
         DateOnly IssueDate,
-        DateOnly? DateOnly,
+        DateOnly? DueDate,
         decimal TotalAmount,
         string Currency,
         string? CustomerOrContactNumber,
