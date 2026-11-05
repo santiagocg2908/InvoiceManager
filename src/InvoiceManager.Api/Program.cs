@@ -1,4 +1,6 @@
 using InvoiceManager.Infrastructure.Persistence;
+using InvoiceManager.Application.Abstractions.Storage;
+using InvoiceManager.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +39,21 @@ builder.Services.AddDbContext<InvoiceManagerDbContext>(options =>
         });
     }
 });
+builder.Services
+    .AddOptions<FileStorageOptions>()
+    .Bind(builder.Configuration.GetSection(
+        FileStorageOptions.SectionName))
+    .Validate(
+        options =>
+            !string.IsNullOrWhiteSpace(options.RootPath) &&
+            Path.IsPathFullyQualified(options.RootPath),
+        "The Storage Path is must be absolute")
+    .ValidateOnStart();
+
+builder.Services.AddScoped<
+    IFileStorageService,
+    LocalFileStorageService
+>();
 
 // Add services to the container.
 
