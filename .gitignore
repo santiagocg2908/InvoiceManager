@@ -1,0 +1,94 @@
+
+# ==========================================
+# Visual Studio
+# ==========================================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# ==========================================
+# .NET / C#
+# ==========================================
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+*.cache
+*.pdb
+*.log
+
+# ==========================================
+# Visual Studio Code
+# ==========================================
+.vscode/*.log
+.vscode/.browse.VC.db*
+.vscode/.browse.VC.db-shm
+.vscode/.browse.VC.db-wal
+
+# ==========================================
+# Node.js / Angular
+# ==========================================
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+**/.nx/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==========================================
+# Environment variables and secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Local application configuration
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.*.local.json
+
+# Credentials and certificates
+**/secrets.json
+*.pfx
+*.p12
+*.pem
+*.key
+*.publishsettings
+
+# ==========================================
+# Operating system
+# ==========================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==========================================
+# IDEs and local tooling
+# ==========================================
+.idea/
+*.suo
+
+# ==========================================
+# Temporary files and backups
+# ==========================================
+*.tmp
+*.bak
+*.old
+*.orig
+*.swp
+*~
+
+# ==========================================
+# Confidential selection documents
+# ==========================================
+**/*Prueba*Full*Stack*.pdf
+**/*enunciado*.pdf
+**/*instrucciones*.pdf
+/confidential/
+/documentos-confidenciales/
