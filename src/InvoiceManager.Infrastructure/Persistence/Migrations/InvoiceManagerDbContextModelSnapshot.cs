@@ -23,168 +23,168 @@ namespace InvoiceManager.Infrastructure.Persistence.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.Invoice", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<DateTime>("CreatedAtUtc")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Currency")
+                    .IsRequired()
+                    .HasColumnType("char(3)");
+
+                b.Property<string>("CustomerOrContactNumber")
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
+
+                b.Property<DateOnly?>("DueDate")
+                    .HasColumnType("date");
+
+                b.Property<string>("InvoiceNumber")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
+
+                b.Property<bool>("IsActive")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(true);
+
+                b.Property<DateOnly>("IssueDate")
+                    .HasColumnType("date");
+
+                b.Property<string>("NormalizedInvoiceNumber")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
+
+                b.Property<int>("SupplierId")
+                    .HasColumnType("int");
+
+                b.Property<decimal>("TotalAmount")
+                    .HasPrecision(18, 2)
+                    .HasColumnType("decimal(18,2)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SupplierId", "NormalizedInvoiceNumber")
+                    .IsUnique()
+                    .HasDatabaseName("UX_Invoices_Supplier_InvoiceNumber");
+
+                b.ToTable("Invoices", null, t =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("char(3)");
-
-                    b.Property<string>("CustomerOrContactNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateOnly?>("DueDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<DateOnly>("IssueDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("NormalizedInvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("SupplierId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SupplierId", "NormalizedInvoiceNumber")
-                        .IsUnique()
-                        .HasDatabaseName("UX_Invoices_Supplier_InvoiceNumber");
-
-                    b.ToTable("Invoices", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Invoices_TotalAmount_Positive", "[TotalAmount] > 0");
-                        });
+                    t.HasCheckConstraint("CK_Invoices_TotalAmount_Positive", "[TotalAmount] > 0");
                 });
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.InvoiceDocument", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<string>("ContentType")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<int>("InvoiceId")
+                    .HasColumnType("int");
+
+                b.Property<string>("OriginalFileName")
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnType("nvarchar(255)");
+
+                b.Property<string>("OriginalLlmResponseJson")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<long>("SizeBytes")
+                    .HasColumnType("bigint");
+
+                b.Property<string>("StoragePath")
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnType("nvarchar(500)");
+
+                b.Property<DateTime>("UploadedAtUtc")
+                    .HasColumnType("datetime2");
+
+                b.HasKey("Id");
+
+                b.HasIndex("InvoiceId")
+                    .IsUnique();
+
+                b.ToTable("InvoiceDocuments", null, t =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("OriginalLlmResponseJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("SizeBytes")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("StoragePath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("UploadedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceId")
-                        .IsUnique();
-
-                    b.ToTable("InvoiceDocuments", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_InvoiceDocuments_SizeBytes_Positive", "[SizeBytes] > 0");
-                        });
+                    t.HasCheckConstraint("CK_InvoiceDocuments_SizeBytes_Positive", "[SizeBytes] > 0");
                 });
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.Supplier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("NormalizedName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                b.Property<string>("NormalizedName")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("UX_Suppliers_NormalizedName");
+                b.HasIndex("NormalizedName")
+                    .IsUnique()
+                    .HasDatabaseName("UX_Suppliers_NormalizedName");
 
-                    b.ToTable("Suppliers", (string)null);
-                });
+                b.ToTable("Suppliers", (string)null);
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.Invoice", b =>
-                {
-                    b.HasOne("InvoiceManager.Domain.Entities.Supplier", "Supplier")
-                        .WithMany("Invoices")
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+            {
+                b.HasOne("InvoiceManager.Domain.Entities.Supplier", "Supplier")
+                    .WithMany("Invoices")
+                    .HasForeignKey("SupplierId")
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
 
-                    b.Navigation("Supplier");
-                });
+                b.Navigation("Supplier");
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.InvoiceDocument", b =>
-                {
-                    b.HasOne("InvoiceManager.Domain.Entities.Invoice", "Invoice")
-                        .WithOne("Document")
-                        .HasForeignKey("InvoiceManager.Domain.Entities.InvoiceDocument", "InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("InvoiceManager.Domain.Entities.Invoice", "Invoice")
+                    .WithOne("Document")
+                    .HasForeignKey("InvoiceManager.Domain.Entities.InvoiceDocument", "InvoiceId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Invoice");
-                });
+                b.Navigation("Invoice");
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.Invoice", b =>
-                {
-                    b.Navigation("Document");
-                });
+            {
+                b.Navigation("Document");
+            });
 
             modelBuilder.Entity("InvoiceManager.Domain.Entities.Supplier", b =>
-                {
-                    b.Navigation("Invoices");
-                });
+            {
+                b.Navigation("Invoices");
+            });
 #pragma warning restore 612, 618
         }
     }
