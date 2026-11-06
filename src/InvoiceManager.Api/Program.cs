@@ -88,6 +88,7 @@ builder.Services.AddHttpClient<
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 builder.Services.AddScoped<ListInvoicesUseCase>();
+builder.Services.AddScoped<GetInvoiceDetailsUseCase>();
 // Add services to the container.
 
 builder.Services.AddControllers();

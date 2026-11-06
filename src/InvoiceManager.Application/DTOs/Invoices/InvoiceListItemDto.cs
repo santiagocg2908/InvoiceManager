@@ -2,7 +2,7 @@
 
 namespace InvoiceManager.Application.DTOs.Invoices
 {
-    public sealed class InvoiceListItemDto(
+    public  sealed record class InvoiceListItemDto(
         int Id,
         string SupplierName,
         string InvoiceNumber,

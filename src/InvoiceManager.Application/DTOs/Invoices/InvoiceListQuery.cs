@@ -2,7 +2,7 @@
 
 namespace InvoiceManager.Application.DTOs.Invoices
 {
-    public sealed class InvoiceListQuery
+    public sealed record class InvoiceListQuery
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;

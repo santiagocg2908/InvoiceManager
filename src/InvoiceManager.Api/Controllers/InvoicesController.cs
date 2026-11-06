@@ -10,11 +10,14 @@ namespace InvoiceManager.Api.Controllers
     public class InvoicesController : ControllerBase
     {
         private readonly ListInvoicesUseCase _listInvoicesUseCase;
+        private readonly GetInvoiceDetailsUseCase _getInvoiceDetailsUseCase;
 
         public InvoicesController(
-            ListInvoicesUseCase listInvoicesUseCase
+            ListInvoicesUseCase listInvoicesUseCase,
+            GetInvoiceDetailsUseCase getInvoiceDetailsUseCase
             )
         {
+            _getInvoiceDetailsUseCase = getInvoiceDetailsUseCase;
             _listInvoicesUseCase = listInvoicesUseCase;
         }
 
@@ -31,6 +34,29 @@ namespace InvoiceManager.Api.Controllers
                 query,
                 cancellationToken
             );
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(
+            typeof(InvoiceDetailDto),
+            StatusCodes.Status200OK)
+            ]
+        [ProducesResponseType(
+            StatusCodes.Status404NotFound
+            )]
+        public async Task <ActionResult<InvoiceDetailDto>> GetById(
+            int id,
+            CancellationToken cancellationToken
+            )
+        {
+            var result = await _getInvoiceDetailsUseCase.ExecuteAsync(
+                id,
+                cancellationToken
+                );
+
+            if (result is null) return NotFound();
 
             return Ok(result);
         }
