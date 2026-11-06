@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using InvoiceManager.Application.Exceptions;
+using System.Reflection;
 
 namespace InvoiceManager.Api.Middleware;
 
@@ -19,7 +21,9 @@ public sealed class ExceptionHandlingMiddleware
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(
+        HttpContext context,
+        IProblemDetailsService problemDetailsService)
     {
         try
         {
@@ -39,34 +43,56 @@ public sealed class ExceptionHandlingMiddleware
 
             context.Response.Clear();
 
-            var (statusCode, message) = MapException(exception);
+            var (statusCode, title, detail) = MapException(exception);
 
             context.Response.StatusCode = statusCode;
 
-            await context.Response.WriteAsJsonAsync(
-                new
+            var problemDetails = new ProblemDetails
+            {
+                Type = "about:blank",
+                Title = title,
+                Status = statusCode,
+                Detail = detail,
+                Instance = context.Request.Path
+            };
+
+            problemDetails.Extensions["traceId"] = context.TraceIdentifier;
+
+            await problemDetailsService.WriteAsync(
+                new ProblemDetailsContext
                 {
-                    statusCode,
-                    message
-                },
-                context.RequestAborted
+                    HttpContext = context,
+                    ProblemDetails = problemDetails
+                }
             );
         }
     }
 
-    private static (int StatusCode, string Message) MapException(
+    private static (int StatusCode, string Title, string Detail) MapException(
         Exception exception)
     {
         return exception switch
         {
-            DuplicateInvoiceException => 
-            (StatusCodes.Status409Conflict, exception.Message),
+            DuplicateInvoiceException =>
+                (
+                    StatusCodes.Status409Conflict,
+                    "Conflict",
+                    exception.Message
+                ),
+
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, exception.Message),
+                (
+                    StatusCodes.Status400BadRequest,
+                    "Bad Request",
+                    exception.Message
+                ),
 
             _ =>
-                (StatusCodes.Status500InternalServerError,
-                 "An unexpected error occurred.")
+                (
+                    StatusCodes.Status500InternalServerError,
+                    "Internal Server Error",
+                    "An unexpected error occurred."
+                )
         };
     }
 }
