@@ -4,6 +4,7 @@ using InvoiceManager.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using InvoiceManager.Application.Abstractions.Extraction;
 using InvoiceManager.Infrastructure.AI;
+using InvoiceManager.Application.UseCases.Invoices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +84,7 @@ builder.Services.AddHttpClient<
     client.Timeout = TimeSpan.FromSeconds(90);
 });
 
+builder.Services.AddScoped<ListInvoicesUseCase>();
 // Add services to the container.
 
 builder.Services.AddControllers();
