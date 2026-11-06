@@ -1,4 +1,6 @@
-﻿using InvoiceManager.Domain.Entities;
+﻿using InvoiceManager.Application.DTOs.Common;
+using InvoiceManager.Application.DTOs.Invoices;
+using InvoiceManager.Domain.Entities;
 
 namespace InvoiceManager.Application.Abstractions.Persistence
 {
@@ -12,5 +14,8 @@ namespace InvoiceManager.Application.Abstractions.Persistence
             int id,
             CancellationToken cancellationToken= default);
         void Add(Invoice invoice);
+        Task<PagedResult<Invoice>> GetPagedAsync(
+            InvoiceListQuery query,
+            CancellationToken cancellationToken = default);
     }
 }
