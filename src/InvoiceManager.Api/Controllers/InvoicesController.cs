@@ -11,12 +11,15 @@ namespace InvoiceManager.Api.Controllers
     {
         private readonly ListInvoicesUseCase _listInvoicesUseCase;
         private readonly GetInvoiceDetailsUseCase _getInvoiceDetailsUseCase;
+        private readonly UpdateInvoiceUseCase _updateInvoiceUseCase;
 
         public InvoicesController(
             ListInvoicesUseCase listInvoicesUseCase,
-            GetInvoiceDetailsUseCase getInvoiceDetailsUseCase
+            GetInvoiceDetailsUseCase getInvoiceDetailsUseCase,
+            UpdateInvoiceUseCase updateInvoiceUseCase
             )
         {
+            _updateInvoiceUseCase = updateInvoiceUseCase;
             _getInvoiceDetailsUseCase = getInvoiceDetailsUseCase;
             _listInvoicesUseCase = listInvoicesUseCase;
         }
@@ -46,13 +49,38 @@ namespace InvoiceManager.Api.Controllers
         [ProducesResponseType(
             StatusCodes.Status404NotFound
             )]
-        public async Task <ActionResult<InvoiceDetailDto>> GetById(
+        public async Task<ActionResult<InvoiceDetailDto>> GetById(
             int id,
             CancellationToken cancellationToken
             )
         {
             var result = await _getInvoiceDetailsUseCase.ExecuteAsync(
                 id,
+                cancellationToken
+                );
+
+            if (result is null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(
+            typeof(InvoiceDetailDto),
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<InvoiceDetailDto>> Update
+            (
+            [FromRoute]int id,
+            [FromBody] UpdateInvoiceRequest request,
+            CancellationToken cancellationToken
+            )
+        {
+            var result = await _updateInvoiceUseCase.ExecuteAsync(
+                id,
+                request,
                 cancellationToken
                 );
 

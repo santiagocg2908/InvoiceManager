@@ -32,12 +32,40 @@ namespace InvoiceManager.Infrastructure.Persistence.Repositories
                 );
         }
 
+        public async Task<bool> ExistsForAnotherInvoiceAsync(int supplierId,
+            string normalizedInvoiceNumber,
+            int excludedInvoiceId,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .Set<Invoice>()
+                .AnyAsync(
+                    invoice =>
+                        invoice.Supplier.Id == supplierId &&
+                        invoice.NormalizedInvoiceNumber == normalizedInvoiceNumber &&
+                        invoice.Id != excludedInvoiceId,
+                    cancellationToken
+                );
+        }
+
         public async Task<Invoice?> GetByIdAsync(int id,
             CancellationToken cancellationToken = default)
         {
             return await _context.Invoices
                 .Include(invoice => invoice.Supplier)
                 .Include(invoice => invoice.Document)
+                .FirstOrDefaultAsync(
+                    invoice => invoice.Id == id,
+                    cancellationToken
+                );
+        }
+
+        public async Task<Invoice?> GetByIdForUpdateAsync(int id,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .Set<Invoice>()
+                .Include(invoice => invoice.Supplier)
                 .FirstOrDefaultAsync(
                     invoice => invoice.Id == id,
                     cancellationToken

@@ -86,9 +86,13 @@ builder.Services.AddHttpClient<
     client.Timeout = TimeSpan.FromSeconds(90);
 });
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IUnitOfWork, InvoiceManagerDbContext>();
 
+//UseCase Inyection
 builder.Services.AddScoped<ListInvoicesUseCase>();
 builder.Services.AddScoped<GetInvoiceDetailsUseCase>();
+builder.Services.AddScoped<UpdateInvoiceUseCase>();
 // Add services to the container.
 
 builder.Services.AddControllers();

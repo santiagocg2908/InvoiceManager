@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Security;
@@ -18,8 +19,8 @@ namespace InvoiceManager.Domain.Entities
             string invoiceNumber,
             DateOnly issueDate,
             decimal totalAmount,
-            string currency,//codigo de moneda
-            DateOnly? dueDate = null, //fecha de vencimiento
+            string currency,
+            DateOnly? dueDate = null,
             string? customerOrContractNumber = null
             )
         {
@@ -169,6 +170,91 @@ namespace InvoiceManager.Domain.Entities
                     nameof(currency));
             }
             Currency = normalizedCurrency;
+        }
+        public void UpdateDetails(
+            Supplier supplier,
+            string invoiceNumber,
+            DateOnly issueDate,
+            DateOnly? dueDate,
+            decimal totalAmount,
+            string currency,
+            string? customerOrContactNumber)
+        {
+
+            ArgumentNullException.ThrowIfNull(supplier);
+
+            if (string.IsNullOrWhiteSpace(invoiceNumber))
+            {
+                throw new ArgumentException(
+                    "The invoice number is required.",
+                    nameof(invoiceNumber));
+            }
+
+            if (invoiceNumber.Trim().Length > 100)
+            {
+                throw new ArgumentException(
+                    "The invoice number cannot exceed 100 characters.",
+                    nameof(invoiceNumber));
+            }
+
+            if (issueDate == default)
+            {
+                throw new ArgumentException(
+                    "The issue date is required.",
+                    nameof(issueDate));
+            }
+
+            if (dueDate.HasValue && dueDate.Value == default)
+            {
+                throw new ArgumentException(
+                    "The due date is invalid.",
+                    nameof(dueDate));
+            }
+
+            if (totalAmount <= 0 ||
+                totalAmount > 9999999999999999.99m ||
+                decimal.Round(totalAmount, 2) != totalAmount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(totalAmount),
+                    "The amount must be positive and have a maximum of two decimals.");
+            }
+
+            if (string.IsNullOrWhiteSpace(currency))
+            {
+                throw new ArgumentException(
+                    "The currency is required.",
+                    nameof(currency));
+            }
+
+            string normalizedCurrency = currency.Trim().ToUpperInvariant();
+
+            if (normalizedCurrency.Length != 3 ||
+                normalizedCurrency.Any(character =>
+                    character < 'A' || character > 'Z'))
+            {
+                throw new ArgumentException(
+                    "The currency must be a three-character alphabetic code.",
+                    nameof(currency));
+            }
+
+            if (customerOrContactNumber?.Trim().Length > 100)
+            {
+                throw new ArgumentException(
+                    "The customer or contract number cannot exceed 100 characters.",
+                    nameof(customerOrContactNumber));
+            }
+
+            Supplier = supplier;
+            InvoiceNumber = invoiceNumber.Trim();
+            IssueDate = issueDate;
+            DueDate = dueDate;
+            TotalAmount = totalAmount;
+            Currency = normalizedCurrency;
+            CustomerOrContactNumber =
+                string.IsNullOrWhiteSpace(customerOrContactNumber)
+                    ? null
+                    : customerOrContactNumber.Trim();
         }
     }
 }
