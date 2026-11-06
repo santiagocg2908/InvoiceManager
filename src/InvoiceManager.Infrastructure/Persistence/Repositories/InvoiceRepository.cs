@@ -131,5 +131,35 @@ namespace InvoiceManager.Infrastructure.Persistence.Repositories
                 totalItems
                 );
         }
+
+        public async Task<IReadOnlyList<InvoiceSummaryDto>> GetSummaryAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var query =
+                from invoice in _context.Set<Invoice>().AsNoTracking()
+
+                join supplier in _context.Set<Supplier>().AsNoTracking()
+                    on invoice.Supplier.Id equals supplier.Id
+
+                where invoice.IsActive
+
+                group invoice by new
+                {
+                    supplier.Name,
+                    invoice.Currency
+
+                } into invoiceGroup
+
+                orderby invoiceGroup.Key.Name, invoiceGroup.Key.Currency
+
+                select new InvoiceSummaryDto(
+                    invoiceGroup.Key.Name,
+                    invoiceGroup.Key.Currency,
+                    invoiceGroup.Count(),
+                    invoiceGroup.Sum(invoice => invoice.TotalAmount)
+                );
+
+            return await query.ToListAsync(cancellationToken);
+        }
     }
 }

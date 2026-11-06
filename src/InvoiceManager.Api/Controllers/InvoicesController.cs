@@ -13,15 +13,22 @@ namespace InvoiceManager.Api.Controllers
         private readonly GetInvoiceDetailsUseCase _getInvoiceDetailsUseCase;
         private readonly UpdateInvoiceUseCase _updateInvoiceUseCase;
 
+        private readonly DesactiveInvoiceUseCase _desactiveInvoiceUseCase;
+        private readonly GetInvoiceSummaryUseCase _getInvoiceSummaryUseCase;
+
         public InvoicesController(
             ListInvoicesUseCase listInvoicesUseCase,
             GetInvoiceDetailsUseCase getInvoiceDetailsUseCase,
-            UpdateInvoiceUseCase updateInvoiceUseCase
+            UpdateInvoiceUseCase updateInvoiceUseCase,
+            DesactiveInvoiceUseCase desactiveInvoiceUseCase,
+            GetInvoiceSummaryUseCase getInvoiceSummaryUseCase
             )
         {
             _updateInvoiceUseCase = updateInvoiceUseCase;
             _getInvoiceDetailsUseCase = getInvoiceDetailsUseCase;
             _listInvoicesUseCase = listInvoicesUseCase;
+            _desactiveInvoiceUseCase = desactiveInvoiceUseCase;
+            _getInvoiceSummaryUseCase = getInvoiceSummaryUseCase;
         }
 
         [HttpGet]
@@ -73,7 +80,7 @@ namespace InvoiceManager.Api.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<InvoiceDetailDto>> Update
             (
-            [FromRoute]int id,
+            [FromRoute] int id,
             [FromBody] UpdateInvoiceRequest request,
             CancellationToken cancellationToken
             )
@@ -86,6 +93,40 @@ namespace InvoiceManager.Api.Controllers
 
             if (result is null) return NotFound();
 
+            return Ok(result);
+        }
+
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Desactive(
+            int id,
+            CancellationToken cancellationToken
+            )
+        {
+            bool desactived =
+                await _desactiveInvoiceUseCase.ExecuteAsync(
+                    id, cancellationToken
+                    );
+
+            if (!desactived)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("reporte/resumen")]
+        [ProducesResponseType(
+            typeof(IReadOnlyList<InvoiceSummaryDto>),
+            StatusCodes.Status200OK)]
+        public async Task<ActionResult<IReadOnlyList<InvoiceSummaryDto>>> GetSummary(
+            CancellationToken cancellationToken)
+        {
+            var result = await _getInvoiceSummaryUseCase.ExecuteAsync(
+                cancellationToken
+                );
             return Ok(result);
         }
     }

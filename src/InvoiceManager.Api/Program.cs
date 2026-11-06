@@ -7,6 +7,7 @@ using InvoiceManager.Infrastructure.AI;
 using InvoiceManager.Application.UseCases.Invoices;
 using InvoiceManager.Application.Abstractions.Persistence;
 using InvoiceManager.Infrastructure.Persistence.Repositories;
+using InvoiceManager.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,12 +88,18 @@ builder.Services.AddHttpClient<
 });
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
-builder.Services.AddScoped<IUnitOfWork, InvoiceManagerDbContext>();
+
+builder.Services.AddDbContext<InvoiceManagerDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<InvoiceManagerDbContext>());
 
 //UseCase Inyection
 builder.Services.AddScoped<ListInvoicesUseCase>();
 builder.Services.AddScoped<GetInvoiceDetailsUseCase>();
 builder.Services.AddScoped<UpdateInvoiceUseCase>();
+builder.Services.AddScoped<DesactiveInvoiceUseCase>();
+builder.Services.AddScoped<GetInvoiceSummaryUseCase>();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -102,6 +109,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

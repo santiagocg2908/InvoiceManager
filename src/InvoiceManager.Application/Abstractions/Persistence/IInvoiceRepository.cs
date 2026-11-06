@@ -27,5 +27,8 @@ namespace InvoiceManager.Application.Abstractions.Persistence
             int excludedInvoiceId,
             CancellationToken cancellationToken = default
         );
+        Task<IReadOnlyList<InvoiceSummaryDto>> GetSummaryAsync(
+            CancellationToken cancellationToken = default);
+
     }
 }
