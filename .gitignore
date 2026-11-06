@@ -52,6 +52,7 @@ pnpm-debug.log*
 **/appsettings.Development.json
 **/appsettings.Local.json
 **/appsettings.*.local.json
+**/Properties/launchSettings.json
 
 # Credentials and certificates
 **/secrets.json

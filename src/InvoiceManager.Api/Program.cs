@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using InvoiceManager.Application.Abstractions.Extraction;
 using InvoiceManager.Infrastructure.AI;
 using InvoiceManager.Application.UseCases.Invoices;
+using InvoiceManager.Application.Abstractions.Persistence;
+using InvoiceManager.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +85,7 @@ builder.Services.AddHttpClient<
 
     client.Timeout = TimeSpan.FromSeconds(90);
 });
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 builder.Services.AddScoped<ListInvoicesUseCase>();
 // Add services to the container.
@@ -90,6 +93,8 @@ builder.Services.AddScoped<ListInvoicesUseCase>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -97,10 +102,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvoiceManager API v1");
+        c.RoutePrefix = string.Empty; // Esto hace que Swagger abra directamente en la raíz (ej: https://localhost:xxxx/)
+    });
 }
 
 app.UseHttpsRedirection();
-
+ 
 app.UseAuthorization();
 
 app.MapControllers();
