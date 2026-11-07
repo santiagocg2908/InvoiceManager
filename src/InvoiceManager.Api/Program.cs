@@ -10,6 +10,16 @@ using InvoiceManager.Infrastructure.Persistence.Repositories;
 using InvoiceManager.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -100,6 +110,7 @@ builder.Services.AddScoped<GetInvoiceDetailsUseCase>();
 builder.Services.AddScoped<UpdateInvoiceUseCase>();
 builder.Services.AddScoped<DesactiveInvoiceUseCase>();
 builder.Services.AddScoped<GetInvoiceSummaryUseCase>();
+builder.Services.AddScoped<RegisterInvoicesUseCase>();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -110,6 +121,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors("AngularPolicy");
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

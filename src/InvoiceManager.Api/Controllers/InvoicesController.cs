@@ -1,6 +1,8 @@
-﻿using InvoiceManager.Application.DTOs.Common;
+﻿using InvoiceManager.Api.DTOs.Invoices;
+using InvoiceManager.Application.DTOs.Common;
 using InvoiceManager.Application.DTOs.Invoices;
 using InvoiceManager.Application.UseCases.Invoices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceManager.Api.Controllers
@@ -12,7 +14,7 @@ namespace InvoiceManager.Api.Controllers
         private readonly ListInvoicesUseCase _listInvoicesUseCase;
         private readonly GetInvoiceDetailsUseCase _getInvoiceDetailsUseCase;
         private readonly UpdateInvoiceUseCase _updateInvoiceUseCase;
-
+        private readonly RegisterInvoicesUseCase _registerInvoicesUseCase;
         private readonly DesactiveInvoiceUseCase _desactiveInvoiceUseCase;
         private readonly GetInvoiceSummaryUseCase _getInvoiceSummaryUseCase;
 
@@ -21,7 +23,8 @@ namespace InvoiceManager.Api.Controllers
             GetInvoiceDetailsUseCase getInvoiceDetailsUseCase,
             UpdateInvoiceUseCase updateInvoiceUseCase,
             DesactiveInvoiceUseCase desactiveInvoiceUseCase,
-            GetInvoiceSummaryUseCase getInvoiceSummaryUseCase
+            GetInvoiceSummaryUseCase getInvoiceSummaryUseCase,
+            RegisterInvoicesUseCase registerInvoicesUseCase
             )
         {
             _updateInvoiceUseCase = updateInvoiceUseCase;
@@ -29,6 +32,7 @@ namespace InvoiceManager.Api.Controllers
             _listInvoicesUseCase = listInvoicesUseCase;
             _desactiveInvoiceUseCase = desactiveInvoiceUseCase;
             _getInvoiceSummaryUseCase = getInvoiceSummaryUseCase;
+            _registerInvoicesUseCase = registerInvoicesUseCase;
         }
 
         [HttpGet]
@@ -128,6 +132,42 @@ namespace InvoiceManager.Api.Controllers
                 cancellationToken
                 );
             return Ok(result);
+        }
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(
+        typeof(RegisteredInvoiceResult),
+        StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<ActionResult<RegisteredInvoiceResult>> Register(
+            [FromForm] UploadInvoiceForm request,
+            CancellationToken cancellationToken)
+        {
+            if (request.File is null || request.File.Length == 0)
+            {
+                return BadRequest("Debe proporcionar un archivo válido.");
+            }
+
+            await using var fileStream = request.File.OpenReadStream();
+
+            var registerRequest = new ReguisterInvoiceRequest(
+                fileStream,
+                request.File.FileName,
+                request.File.ContentType,
+                request.File.Length
+            );
+
+            var result = await _registerInvoicesUseCase.ExecuteAsync(
+                registerRequest,
+                cancellationToken
+            );
+
+            return StatusCode(
+                StatusCodes.Status201Created,
+                result
+            );
         }
     }
 }

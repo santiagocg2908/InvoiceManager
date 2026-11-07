@@ -113,7 +113,7 @@ namespace InvoiceManager.Infrastructure.AI
                 },
                 generationConfig = new
                 {
-                    responseMimeType = "applications/json",
+                    responseMimeType = "application/json",
                     responseSchema = schema,
                     temperature = 0.1
                 }
@@ -299,7 +299,6 @@ namespace InvoiceManager.Infrastructure.AI
                 "currency",
                 "customerOrContractNumber"
             },
-                additionalProperties = false
             };
         }
 

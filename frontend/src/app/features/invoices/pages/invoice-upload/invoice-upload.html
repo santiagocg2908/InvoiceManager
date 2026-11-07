@@ -1,1 +1,116 @@
-<p>invoice-upload works!</p>
+<section class="upload-container">
+
+  <h2>Cargar factura</h2>
+
+  <p>
+    Selecciona un documento para iniciar el procesamiento.
+  </p>
+
+  <div class="file-selector">
+
+    <label for="invoiceFile">
+      Seleccionar documento
+    </label>
+
+    <input
+      #fileInput
+      id="invoiceFile"
+      type="file"
+      accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+      [disabled]="isUploading"
+      (change)="onFileSelected($event)"
+    />
+
+    <small>
+      Formatos permitidos: PDF, PNG y JPG.
+    </small>
+
+    <small>
+        Tamaño máximo permitido: 10 MB.
+    </small>
+
+  </div>
+  @if (isUploading) {
+  <div class="upload-status" role="status" aria-live="polite">
+    <p>Procesando documento...</p>
+    <p>Espera mientras se completa la operación.</p>
+  </div>
+}
+  @if (successMessage) {
+  <div class="success-message" role="status">
+    {{ successMessage }}
+  </div>
+}
+
+  @if (errorMessage) {
+    <div class="error-message" role="alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (selectedFile; as file) {
+
+    <div class="selected-file">
+
+      <h3>Documento seleccionado</h3>
+
+      @if (previewUrl) {
+
+        <img
+          [src]="previewUrl"
+          alt="Vista previa del documento"
+          class="image-preview"
+        />
+
+      } @else {
+
+        <div class="pdf-preview">
+          <span>PDF</span>
+        </div>
+
+      }
+
+      <div class="file-information">
+
+        <p>
+          <strong>Nombre:</strong>
+          {{ file.name }}
+        </p>
+
+        <p>
+          <strong>Tipo:</strong>
+          {{ file.type }}
+        </p>
+
+        <p>
+          <strong>Tamaño:</strong>
+          {{ formatFileSize(file.size) }}
+        </p>
+        <button
+        type="button"
+        [disabled]="isUploading"
+        (click)="uploadSelectedFile()"
+        >
+        @if (isUploading) {
+            Procesando documento...
+        } @else {
+            Cargar y procesar factura
+        }
+        </button>
+
+      </div>
+
+      <button
+        type="button"
+        (click)="removeFile(fileInput)"
+      [disabled]="isUploading"
+      >
+        Quitar documento
+      </button>
+      
+
+    </div>
+
+  }
+
+</section>
