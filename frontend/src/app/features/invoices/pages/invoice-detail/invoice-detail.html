@@ -2,7 +2,9 @@
 <section class="invoice-detail-container">
 
   <h2>Detalle de factura</h2>
-
+    <a routerLink="/facturas" class="back-link">
+    Volver al listado
+    </a>
   @if (isLoading) {
     <p>Cargando información de la factura...</p>
   }
@@ -10,47 +12,162 @@
   @if (errorMessage) {
     <p class="error-message">{{ errorMessage }}</p>
   }
+  
+@if (invoice && !isLoading) {
+  <form [formGroup]="invoiceForm" class="invoice-form">
 
-  @if (invoice && !isLoading) {
-    <div class="invoice-information">
-
-      <p>
-        <strong>Proveedor:</strong>
-        {{ invoice.supplierName }}
-      </p>
-
-      <p>
-        <strong>Número de factura:</strong>
-        {{ invoice.invoiceNumber }}
-      </p>
-
-      <p>
-        <strong>Fecha de emisión:</strong>
-        {{ invoice.issueDate }}
-      </p>
-
-      <p>
-        <strong>Fecha de vencimiento:</strong>
-        {{ invoice.dueDate ?? 'No definida' }}
-      </p>
-
-      <p>
-        <strong>Total:</strong>
-        {{ invoice.totalAmount }}
-        {{ invoice.currency }}
-      </p>
-
-      <p>
-        <strong>Número de contacto:</strong>
-        {{ invoice.customerOrContactNumber ?? 'No definido' }}
-      </p>
-
-      <p>
-        <strong>Estado:</strong>
-        {{ invoice.isActive ? 'Activa' : 'Inactiva' }}
-      </p>
-
+    <div class="form-group">
+      <label for="supplierName">Proveedor</label>
+      <input
+        id="supplierName"
+        type="text"
+        formControlName="supplierName"
+      />
+        @if (hasError('supplierName', 'required')) {
+    <small class="validation-error">
+      El proveedor es obligatorio.
+    </small>
+    }@if (hasError('supplierName', 'maxlength')) {
+        <small class="validation-error">
+        El proveedor no puede superar los 200 caracteres.
+        </small>
+    }
     </div>
-  }
+
+    <div class="form-group">
+      <label for="invoiceNumber">Número de factura</label>
+      <input
+        id="invoiceNumber"
+        type="text"
+        formControlName="invoiceNumber"
+      />
+        @if (hasError('invoiceNumber', 'required')) {
+    <small class="validation-error">
+        El número de factura es obligatorio.
+    </small>
+    }
+
+    @if (hasError('invoiceNumber', 'maxlength')) {
+    <small class="validation-error">
+        El número no puede superar los 100 caracteres.
+    </small>
+    }
+    </div>
+
+    <div class="form-group">
+      <label for="issueDate">Fecha de emisión</label>
+      <input
+        id="issueDate"
+        type="date"
+        formControlName="issueDate"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="dueDate">Fecha de vencimiento</label>
+      <input
+        id="dueDate"
+        type="date"
+        formControlName="dueDate"
+      />
+    </div>
+    @if (
+    invoiceForm.hasError('invalidDateRange') &&
+    (
+        invoiceForm.get('dueDate')?.touched ||
+        invoiceForm.get('issueDate')?.touched
+    )
+    ) {
+    <small class="validation-error">
+        La fecha de vencimiento no puede ser anterior
+        a la fecha de emisión.
+    </small>
+    }
+
+    <div class="form-group">
+      <label for="totalAmount">Total</label>
+      <input
+        id="totalAmount"
+        type="number"
+        step="0.01"
+        formControlName="totalAmount"
+      />
+        @if (hasError('totalAmount', 'required')) {
+    <small class="validation-error">
+        El Valor es obligatorio.
+    </small>
+    }
+
+    @if (hasError('totalAmount', 'min')) {
+    <small class="validation-error">
+        El Valor debe ser mayor que cero.
+    </small>
+    }
+
+    @if (hasError('totalAmount', 'max')) {
+    <small class="validation-error">
+        El Valor supera el máximo permitido.
+    </small>
+}
+    </div>
+
+    <div class="form-group">
+      <label for="currency">Moneda</label>
+      <input
+        id="currency"
+        type="text"
+        maxlength="3"
+        formControlName="currency"
+      />
+        @if (hasError('currency', 'required')) {
+    <small class="validation-error">
+        La moneda es obligatoria.
+    </small>
+    }
+
+    @if (hasError('currency', 'minlength') ||
+        hasError('currency', 'maxlength')) {
+    <small class="validation-error">
+        La moneda debe contener exactamente tres caracteres.
+    </small>
+    }
+    </div>
+
+    <div class="form-group">
+      <label for="customerOrContactNumber">
+        Número de contacto
+      </label>
+      <input
+        id="customerOrContactNumber"
+        type="text"
+        formControlName="customerOrContactNumber"
+      />
+    </div>
+
+  </form>
+}
+<div class="form-actions">
+
+  <button
+    type="button"
+    (click)="saveChanges()"
+    [disabled]="isSaving || isLoading">
+
+    {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
+
+  </button>
+
+</div>
+@if (successMessage) {
+  <p class="success-message">
+    {{ successMessage }}
+  </p>
+}
+
+@if (errorMessage) {
+  <p class="error-message">
+    {{ errorMessage }}
+  </p>
+}
 
 </section>

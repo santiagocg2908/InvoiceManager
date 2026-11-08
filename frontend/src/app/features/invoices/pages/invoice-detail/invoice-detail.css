@@ -22,3 +22,87 @@
   background-color: #fef3f2;
   border-radius: 6px;
 }
+.invoice-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+@media (max-width: 650px) {
+  .invoice-form {
+    grid-template-columns: 1fr;
+  }
+}
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.form-actions button {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success-message {
+  padding: 12px;
+  color: #067647;
+  background-color: #ecfdf3;
+  border-radius: 6px;
+}
+.validation-error {
+  color: #b42318;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+}
+
+.form-group input.ng-invalid.ng-touched {
+  border-color: #b42318;
+}
+
+.form-group input.ng-valid.ng-touched {
+  border-color: #067647;
+}
+.back-link {
+  display: inline-block;
+  margin: 10px 0 20px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}

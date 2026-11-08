@@ -8,7 +8,7 @@ namespace InvoiceManager.Application.DTOs.Invoices
         string InvoiceNumber,
         DateOnly IssueDate,
         DateOnly? DueDate,
-        decimal TotalaAmount,
+        decimal TotalAmount,
         string Currency,
         bool IsActive
         );
