@@ -92,4 +92,8 @@ export class InvoiceService{
 
         return this.http.post<unknown>(url, formData);
     }
+    desactiveInvoiceById(id: number): Observable<void> {
+        const url = `${API_BASE_URL}/facturas/${id}`;
+        return this.http.delete<void>(url);
+    }
 }

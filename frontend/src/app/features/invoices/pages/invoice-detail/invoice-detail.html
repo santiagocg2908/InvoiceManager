@@ -158,6 +158,18 @@
   </button>
 
 </div>
+<div class="form-actions">
+
+  <button
+    type="button"
+    (click)="desactiveInvoice()"
+    [disabled]="isSaving || isLoading">
+
+    {{ isSaving ? 'Desactivando...' : 'Desactivar' }}
+
+  </button>
+
+</div>
 @if (successMessage) {
   <p class="success-message">
     {{ successMessage }}

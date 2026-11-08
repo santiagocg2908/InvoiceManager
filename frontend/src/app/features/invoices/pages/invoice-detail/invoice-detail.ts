@@ -134,6 +134,7 @@ loadInvoice(id: number): void {
   });
 }
 
+
 hasError(controlName: string, errorName: string): boolean {
   const control = this.invoiceForm.get(controlName);
 
@@ -142,6 +143,26 @@ hasError(controlName: string, errorName: string): boolean {
     (control.touched || control.dirty);
 }
 
+desactiveInvoice(): void {
+  if (this.invoiceForm.invalid || this.isSaving || !this.invoice) {
+    this.invoiceForm.markAllAsTouched();
+    return;
+  }
+  this.invoiceService.desactiveInvoice(this.invoice.id).subscribe({
+    next: () => {
+      if (this.invoice) {
+        this.invoice.isActive = false;
+      }
+      this.successMessage = 'Factura desactivada correctamente.';
+      this.cdRef.markForCheck();
+    },
+    error: (error: unknown) => {
+      console.error('Error al desactivar la factura:', error);
+      this.errorMessage = 'No fue posible desactivar la factura.';
+      this.cdRef.markForCheck();
+    }
+  });
+}
 
 saveChanges(): void {
   if (this.invoiceForm.invalid || this.isSaving || !this.invoice) {
