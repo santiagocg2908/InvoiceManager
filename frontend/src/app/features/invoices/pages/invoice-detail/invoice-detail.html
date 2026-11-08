@@ -1,1 +1,56 @@
-<p>invoice-detail works!</p>
+
+<section class="invoice-detail-container">
+
+  <h2>Detalle de factura</h2>
+
+  @if (isLoading) {
+    <p>Cargando información de la factura...</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (invoice && !isLoading) {
+    <div class="invoice-information">
+
+      <p>
+        <strong>Proveedor:</strong>
+        {{ invoice.supplierName }}
+      </p>
+
+      <p>
+        <strong>Número de factura:</strong>
+        {{ invoice.invoiceNumber }}
+      </p>
+
+      <p>
+        <strong>Fecha de emisión:</strong>
+        {{ invoice.issueDate }}
+      </p>
+
+      <p>
+        <strong>Fecha de vencimiento:</strong>
+        {{ invoice.dueDate ?? 'No definida' }}
+      </p>
+
+      <p>
+        <strong>Total:</strong>
+        {{ invoice.totalAmount }}
+        {{ invoice.currency }}
+      </p>
+
+      <p>
+        <strong>Número de contacto:</strong>
+        {{ invoice.customerOrContactNumber ?? 'No definido' }}
+      </p>
+
+      <p>
+        <strong>Estado:</strong>
+        {{ invoice.isActive ? 'Activa' : 'Inactiva' }}
+      </p>
+
+    </div>
+  }
+
+</section>

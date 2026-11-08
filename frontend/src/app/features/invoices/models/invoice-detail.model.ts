@@ -8,6 +8,6 @@ export interface InvoiceDetail{
     dueDate: DateOnly | null;
     totalAmount: number;
     currency: string;
-    customberOrContactNumber: string | null;
+    customerOrContactNumber: string | null;
     isActive: boolean;
 }

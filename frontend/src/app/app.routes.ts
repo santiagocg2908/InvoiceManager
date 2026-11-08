@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
 import {InvoiceList} from './features/invoices/pages/invoice-list/invoice-list';
-import {InvoiceDetail} from './features/invoices/pages/invoice-detail/invoice-detail';
-import {InvoiceUpload} from './features/invoices/pages/invoice-upload/invoice-upload';
+import { InvoiceDetailComponent } from
+  './features/invoices/pages/invoice-detail/invoice-detail';import {InvoiceUpload} from './features/invoices/pages/invoice-upload/invoice-upload';
 
 
 export const routes: Routes = [
@@ -22,7 +22,7 @@ export const routes: Routes = [
 
     {
         path: 'facturas/:id',
-        component: InvoiceDetail,
+        component: InvoiceDetailComponent,
         title: 'Detalle de factura'
     },
 

@@ -1,1 +1,119 @@
-<p>invoice-list works!</p>
+
+<section class="invoice-list-container">
+
+  <h2>Facturas registradas</h2>
+  <div class="filters-container">
+
+  <div class="filter-group">
+    <label for="supplierFilter">Proveedor</label>
+    <input
+      id="supplierFilter"
+      type="text"
+      placeholder="Buscar proveedor..."
+      [(ngModel)]="supplierFilter"
+    />
+  </div>
+
+  <div class="filter-group">
+    <label for="issueDateFromFilter">Fecha inicial</label>
+    <input
+      id="issueDateFromFilter"
+      type="date"
+      [(ngModel)]="issueDateFromFilter"
+    />
+  </div>
+
+  <div class="filter-group">
+    <label for="issueDateToFilter">Fecha final</label>
+    <input
+      id="issueDateToFilter"
+      type="date"
+      [(ngModel)]="issueDateToFilter"
+    />
+  </div>
+
+  <button type="button" (click)="applyFilters()">
+    Aplicar filtros
+  </button>
+
+</div>
+
+  @if (isLoading) {
+    <p class="loading-message">Cargando facturas...</p>
+  }
+
+@if (errorMessage) {
+  <div class="error-container">
+    <p>{{ errorMessage }}</p>
+
+    <button
+      type="button"
+      (click)="retryLoadInvoices()"
+      [disabled]="isLoading">
+      Reintentar
+    </button>
+  </div>
+}
+
+  @if (!isLoading && !errorMessage && invoices.length === 0) {
+    <p class="empty-message">
+      No hay facturas registradas.
+    </p>
+  }
+
+  @if (!isLoading && invoices.length > 0) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Proveedor</th>
+            <th>Número</th>
+            <th>Fecha de emisión</th>
+            <th>Fecha de vencimiento</th>
+            <th>Total</th>
+            <th>Moneda</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (invoice of invoices; track invoice.id) {
+            <tr>
+              <td>{{ invoice.supplierName }}</td>
+              <td>{{ invoice.invoiceNumber }}</td>
+              <td>{{ invoice.issueDate }}</td>
+              <td>{{ invoice.dueDate ?? 'No definida' }}</td>
+              <td>{{ invoice.totalAmount | number:'1.2-2' }}</td>
+              <td>{{ invoice.currency }}</td>
+              <td>
+                {{ invoice.isActive ? 'Activa' : 'Inactiva' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination-container">
+
+  <button
+    type="button"
+    (click)="goToPreviousPage()"
+    [disabled]="!hasPreviousPage || isLoading">
+    Anterior
+  </button>
+
+  <span>
+    Página {{ currentPage }} de {{ totalPages }}
+  </span>
+
+  <button
+    type="button"
+    (click)="goToNextPage()"
+    [disabled]="!hasNextPage || isLoading">
+    Siguiente
+  </button>
+
+</div>
+  }
+
+</section>

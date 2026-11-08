@@ -1,0 +1,24 @@
+
+.invoice-detail-container {
+  padding: 24px;
+}
+
+.invoice-information {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.invoice-information p {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.error-message {
+  padding: 12px;
+  color: #b42318;
+  background-color: #fef3f2;
+  border-radius: 6px;
+}
