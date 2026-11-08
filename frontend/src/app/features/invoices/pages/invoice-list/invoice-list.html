@@ -32,7 +32,7 @@
     />
   </div>
 
-  <button type="button" (click)="applyFilters()">
+  <button type="button" class="action-button" (click)="applyFilters()">
     Aplicar filtros
   </button>
 
@@ -89,9 +89,9 @@
                 {{ invoice.isActive ? 'Activa' : 'Inactiva' }}
               </td>
             <td>
-            <a [routerLink]="['/facturas', invoice.id]">
+            <button type="button" class="action-button" [routerLink]="['/facturas', invoice.id]">
                 Ver detalle
-            </a>
+            </button>
             </td>
             </tr>
           }
@@ -113,6 +113,7 @@
 
   <button
     type="button"
+    class ="action-button"
     (click)="goToNextPage()"
     [disabled]="!hasNextPage || isLoading">
     Siguiente
