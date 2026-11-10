@@ -79,7 +79,7 @@ export class InvoiceService{
     }
     
     getInvoiceSummary(): Observable<InvoiceSummary[]>{
-        const url = '${API_BASE_URL}/facturas/reporte/resumen';
+        const url = `${API_BASE_URL}/facturas/reporte/resumen`;
 
         return this.http.get<InvoiceSummary[]>(url);
     }

@@ -3,10 +3,12 @@ import { DecimalPipe } from '@angular/common';
 import { InvoiceService } from '../../services/invoice.service';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import type { InvoiceListItem } from '../../models/invoice-list-item.model';
 import type { InvoiceListQuery } from '../../models/invoice-list-query.model';
 import type { PagedResult } from '../../../../shared/models/paged-result.model';
+import type { InvoiceSummary } from '../../models/invoice-summary.model';
 
 @Component({
   selector: 'app-invoice-list',
@@ -25,9 +27,17 @@ export class InvoiceList implements OnInit {
 
   currentPage = 1;
 
-  pageSize = 10;
+  pageSize = 5;
 
   totalItems = 0;
+
+  supplierSummaries: InvoiceSummary[] = [];
+
+  showSupplierSummary: boolean = false;
+
+  isSummaryLoading: boolean = false;
+
+  summaryErrorMessage: string | null = null;
 
   supplierFilter = '';
   issueDateFromFilter = '';
@@ -74,6 +84,38 @@ export class InvoiceList implements OnInit {
     this.currentPage++;
     this.loadInvoices();
   }
+  showInvoiceList(): void {
+  this.showSupplierSummary = false;
+  this.summaryErrorMessage = null;
+}
+
+ loadSupplierSummaries(): void {
+  this.showSupplierSummary = true;
+  this.isSummaryLoading = true;
+  this.summaryErrorMessage = null;
+
+  this.invoiceService.getInvoiceSummary()
+    .pipe(
+      finalize(() => {
+        this.isSummaryLoading = false;
+        this.cdr.markForCheck();
+      })
+    )
+    .subscribe({
+      next: (result) => {
+        this.supplierSummaries = result;
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        console.error('Error al cargar los resúmenes:', error);
+
+        this.summaryErrorMessage =
+          'No fue posible cargar los resúmenes por proveedor.';
+
+        this.cdr.markForCheck();
+      }
+    });
+} 
 
 loadInvoices(): void {
   const query: InvoiceListQuery = {

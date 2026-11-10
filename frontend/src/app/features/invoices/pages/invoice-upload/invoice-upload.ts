@@ -116,7 +116,6 @@ uploadSelectedFile(): void {
       finalize(() => {
         this.isUploading = false;
 
-        // Notificar a Angular que debe actualizar la vista.
         this.cdr.markForCheck();
       })
     )

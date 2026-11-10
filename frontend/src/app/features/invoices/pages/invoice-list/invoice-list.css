@@ -146,3 +146,17 @@ tbody tr:hover {
   color: #888888;
   cursor: not-allowed;
 }
+.summary-container {
+  margin-top: 24px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.summary-header h3 {
+  margin: 0;
+}

@@ -36,7 +36,82 @@
     Aplicar filtros
   </button>
 
+  <button
+  type="button"
+  class="action-button"
+  (click)="loadSupplierSummaries()"
+  [disabled]="isLoading || isSummaryLoading">
+  Resumen por proveedores
+</button>
+
 </div>
+@if (showSupplierSummary) {
+
+  <div class="summary-container">
+
+    <div class="summary-header">
+      <h3>Resumen por proveedores</h3>
+
+      <button
+        type="button"
+        class="action-button"
+        (click)="showInvoiceList()">
+        Volver a facturas
+      </button>
+    </div>
+
+    @if (isSummaryLoading) {
+      <p class="loading-message">
+        Cargando resúmenes...
+      </p>
+    }
+
+    @if (summaryErrorMessage) {
+      <p class="error-message">
+        {{ summaryErrorMessage }}
+      </p>
+    }
+
+    @if (!isSummaryLoading && !summaryErrorMessage) {
+
+      @if (supplierSummaries.length === 0) {
+        <p class="empty-message">
+          No hay resúmenes disponibles.
+        </p>
+      } @else {
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Proveedor</th>
+                <th>Moneda</th>
+                <th>Total de facturas</th>
+                <th>Monto acumulado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (summary of supplierSummaries; track $index) {
+                <tr>
+                  <td>{{ summary.supplierName }}</td>
+                  <td>{{ summary.currency }}</td>
+                  <td>{{ summary.totalInvoices }}</td>
+                  <td>
+                    {{ summary.totalAmount | number:'1.2-2' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+      }
+    }
+
+  </div>
+
+}
 
   @if (isLoading) {
     <p class="loading-message">Cargando facturas...</p>
